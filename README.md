@@ -1,2 +1,2 @@
 # PhigrosApi
-Phigros的战绩查询接口
+Phigros的战绩查询SDK
