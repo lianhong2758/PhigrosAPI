@@ -14,6 +14,7 @@ func (b *Bytes) ReadShort() byte {
 	if num < 128 {
 		b.ptr++
 	} else {
+		num = num&0b01111111 ^ b.Data[b.ptr+1]<<7
 		b.ptr += 2
 	}
 	return num
@@ -28,13 +29,12 @@ func (b *Bytes) ReadNext() {
 }
 
 func (b *Bytes) ReadString() string {
-	length := b.Data[b.ptr]
-	b.ptr += int(length + 1)
+	length := b.ReadShort()
+	b.ptr += int(length)
 	return BytesToString(b.Data[b.ptr-int(length) : b.ptr])
 }
 
 func (b *Bytes) ReadScoreAcc() ScoreAcc {
-
 	return ScoreAcc{Score: int(b.ReadInt32()), Acc: b.ReadFloat32()}
 }
 
@@ -49,7 +49,7 @@ func (b *Bytes) ReadFloat32() float32 {
 }
 
 func GetBool(num byte, index int) bool {
-	return num&(1<<index) == 1
+	return (num>>index)&1 == 1
 }
 
 func (b *Bytes) ReadRecord(songId string) []ScoreAcc {

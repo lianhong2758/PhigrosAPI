@@ -65,9 +65,10 @@ func DecoderWithStruct[T PhigrosStruct](in []byte) *T {
 	bit := 0
 	reader := NewBytesReader(in)
 
-	for i := 0; i < v.NumField(); i++ {
+	for i := range v.NumField() {
 		if v.Field(i).Kind() == reflect.Bool {
 			v.Field(i).SetBool(GetBool(reader.ReadBool(), bit))
+			bit++
 			continue
 		}
 		if bit > 0 {
@@ -122,23 +123,23 @@ func DecoderGameRecord(in []byte) []ScoreAcc {
 func ParseSave(path string) (map[string]any, error) {
 	m, err := ReadZip(path)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	for k, v := range m {
 		out, err := Decrypt(v)
 		if err != nil {
-			return nil,fmt.Errorf("Decrypt file %s Error %s", k, err.Error())
+			return nil, fmt.Errorf("Decrypt file %s Error %s", k, err.Error())
 		}
 		m[k] = out
 	}
 	if m["gameRecord"][:1][0] != byte(0x01) {
-		return nil,errors.New("版本号不正确，可能协议已更新。")
+		return nil, errors.New("版本号不正确，可能协议已更新。")
 	}
 	//json
 	jsons := make(map[string]any)
 	jsons["gameRecord"] = DecoderGameRecord(m["gameRecord"][1:])
-	// jsons["settings"] = *DecoderWithStruct[Settings](m["settings"][1:])
-	// jsons["user"] = *DecoderWithStruct[User](m["user"][1:])
+	jsons["settings"] = *DecoderWithStruct[Settings](m["settings"][1:])
+	jsons["user"] = *DecoderWithStruct[User](m["user"][1:])
 	// fmt.Println(jsons)
-	return jsons,nil
+	return jsons, nil
 }
