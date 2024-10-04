@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"testing"
 )
-
+//个人token获取查看link: https://www.taptap.cn/moment/535045245566452043
+//2.2
 var token = "zp4fenkahnb7639x9t6v38jmn"
 
 func TestSave(t *testing.T) {
