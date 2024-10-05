@@ -17,12 +17,12 @@ func TestSave(t *testing.T) {
 	var us phigros.GameSave
 	_ = json.Unmarshal(data, &us)
 	phigros.SaveGameData(us.Results[0].GameFile.URL, "../data/gamesave/"+Session+".zip")
-	_ = phigros.LoadDifficult("../data/difficulty.tsv")
+	_ = phigros.LoadDifficult("../difficulty.tsv")
 	j, _ := phigros.ParseSave("../data/gamesave/" + Session + ".zip")
 	fmt.Println(j)
 }
 func TestJson(t *testing.T) {
-	_ = phigros.LoadDifficult("../data/difficulty.tsv")
+	_ = phigros.LoadDifficult("../difficulty.tsv")
 	j := phigros.UserRecord{Session: Session}
 	data, _ := phigros.GetDataFormTap(phigros.UserMeUrl, Session) //获取id
 	var um phigros.UserMe
