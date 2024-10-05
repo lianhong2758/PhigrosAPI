@@ -3,13 +3,22 @@ package phigros
 type Bytes struct {
 	Data []byte
 	ptr  int
+	bit  int
 }
 
 func NewBytesReader(b []byte) *Bytes {
-	return &Bytes{Data: b, ptr: 0}
+	return &Bytes{Data: b, ptr: 0, bit: 0}
+}
+
+func (b *Bytes) Alignment() {
+	if b.bit > 0 {
+		b.bit = 0
+		b.ptr++
+	}
 }
 
 func (b *Bytes) ReadShort() byte {
+	b.Alignment()
 	num := b.Data[b.ptr]
 	if num < 128 {
 		b.ptr++
@@ -20,8 +29,15 @@ func (b *Bytes) ReadShort() byte {
 	return num
 }
 
-func (b *Bytes) ReadBool() byte {
-	return b.Data[b.ptr]
+func (b *Bytes) ReadBool() (tb bool) {
+	if b.bit >= 4 {
+		b.bit = 0
+		b.ptr++
+	}
+	t := b.Data[b.ptr]
+	tb = GetBool(t, b.bit)
+	b.bit++
+	return
 }
 
 func (b *Bytes) ReadNext() {
@@ -29,6 +45,7 @@ func (b *Bytes) ReadNext() {
 }
 
 func (b *Bytes) ReadString() string {
+	b.Alignment()
 	length := b.ReadShort()
 	b.ptr += int(length)
 	return BytesToString(b.Data[b.ptr-int(length) : b.ptr])
@@ -39,11 +56,13 @@ func (b *Bytes) ReadScoreAcc() ScoreAcc {
 }
 
 func (b *Bytes) ReadInt32() int32 {
+	b.Alignment()
 	b.ptr += 4
 	return BytesToInt(b.Data[b.ptr-4 : b.ptr])
 }
 
 func (b *Bytes) ReadFloat32() float32 {
+	b.Alignment()
 	b.ptr += 4
 	return ByteToFloat32(b.Data[b.ptr-4 : b.ptr])
 }

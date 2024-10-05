@@ -62,27 +62,15 @@ func unpad(data []byte) []byte {
 func DecoderWithStruct[T PhigrosStruct](in []byte) *T {
 	var ps T
 	v := reflect.ValueOf(&ps).Elem()
-	bit := 0
 	reader := NewBytesReader(in)
-
 	for i := range v.NumField() {
-		if v.Field(i).Kind() == reflect.Bool {
-			v.Field(i).SetBool(GetBool(reader.ReadBool(), bit))
-			bit++
-			continue
-		}
-		if bit > 0 {
-			bit = 0
-			reader.ReadNext()
-		}
 		switch v.Field(i).Kind() {
+		case reflect.Bool:
+			v.Field(i).SetBool(reader.ReadBool())
 		case reflect.String:
 			v.Field(i).SetString(reader.ReadString())
 		case reflect.Float32:
 			v.Field(i).SetFloat(float64(reader.ReadFloat32()))
-		}
-		if bit > 0 {
-			reader.ReadNext()
 		}
 
 	}
@@ -107,11 +95,11 @@ func DecoderGameRecord(in []byte) []ScoreAcc {
 
 // 前19成绩,取最高成绩放第一位
 func B19(records []ScoreAcc) []ScoreAcc {
- return BN(records,19)
+	return BN(records, 19)
 }
 
-//取前n成绩,取最高成绩放第一位
-func BN(records []ScoreAcc,n int) []ScoreAcc {
+// 取前n成绩,取最高成绩放第一位
+func BN(records []ScoreAcc, n int) []ScoreAcc {
 	var maxRecord ScoreAcc
 	for _, r := range records {
 		if r.Score == 1000000 {
@@ -121,8 +109,8 @@ func BN(records []ScoreAcc,n int) []ScoreAcc {
 		}
 	}
 	bn := []ScoreAcc{maxRecord}
-	if n<=0{
-		return  append(bn, records...)
+	if n <= 0 {
+		return append(bn, records...)
 	}
 	// 将records中的前19个记录加入b19
 	if len(records) >= n {
@@ -132,6 +120,7 @@ func BN(records []ScoreAcc,n int) []ScoreAcc {
 	}
 	return bn
 }
+
 // 通过zip文件读取所有云端内容
 func ParseSave(path string) (map[string]any, error) {
 	m, err := ReadZip(path)
