@@ -69,39 +69,49 @@ type UserMe struct {
 	Username            string    `json:"username"`
 }
 
-
-type  GameSave struct {
+type GameSave struct {
 	Results []struct {
 		CreatedAt time.Time `json:"createdAt"`
-		GameFile struct {
-			Type string `json:"__type"`
-			Bucket string `json:"bucket"`
+		GameFile  struct {
+			Type      string    `json:"__type"`
+			Bucket    string    `json:"bucket"`
 			CreatedAt time.Time `json:"createdAt"`
-			Key string `json:"key"`
-			MetaData struct {
+			Key       string    `json:"key"`
+			MetaData  struct {
 				Checksum string `json:"_checksum"`
-				Prefix string `json:"prefix"`
-				Size int `json:"size"`
+				Prefix   string `json:"prefix"`
+				Size     int    `json:"size"`
 			} `json:"metaData"`
-			MimeType string `json:"mime_type"`
-			Name string `json:"name"`
-			ObjectID string `json:"objectId"`
-			Provider string `json:"provider"`
+			MimeType  string    `json:"mime_type"`
+			Name      string    `json:"name"`
+			ObjectID  string    `json:"objectId"`
+			Provider  string    `json:"provider"`
 			UpdatedAt time.Time `json:"updatedAt"`
-			URL string `json:"url"`
+			URL       string    `json:"url"`
 		} `json:"gameFile"`
 		ModifiedAt struct {
-			Type string `json:"__type"`
-			Iso time.Time `json:"iso"`
+			Type string    `json:"__type"`
+			Iso  time.Time `json:"iso"`
 		} `json:"modifiedAt"`
-		Name string `json:"name"`
-		ObjectID string `json:"objectId"`
-		Summary string `json:"summary"`
+		Name      string    `json:"name"`
+		ObjectID  string    `json:"objectId"`
+		Summary   string    `json:"summary"`
 		UpdatedAt time.Time `json:"updatedAt"`
-		User struct {
-			Type string `json:"__type"`
+		User      struct {
+			Type      string `json:"__type"`
 			ClassName string `json:"className"`
-			ObjectID string `json:"objectId"`
+			ObjectID  string `json:"objectId"`
 		} `json:"user"`
 	} `json:"results"`
+}
+type PlayerInfo struct {
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	Avatar    string    `json:"avatar"`
+}
+type UserRecord struct {
+	Session    string     `json:"session"`
+	PlayerInfo PlayerInfo `json:"playerInfo"`
+	ScoreAcc   []ScoreAcc `json:"scoreAcc"`
 }

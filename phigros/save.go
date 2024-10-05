@@ -101,6 +101,17 @@ func DecoderGameRecord(in []byte) []ScoreAcc {
 	sort.Slice(records, func(i, j int) bool {
 		return records[i].Rks < records[j].Rks
 	})
+	return records
+
+}
+
+// 前19成绩,取最高成绩放第一位
+func B19(records []ScoreAcc) []ScoreAcc {
+ return BN(records,19)
+}
+
+//取前n成绩,取最高成绩放第一位
+func BN(records []ScoreAcc,n int) []ScoreAcc {
 	var maxRecord ScoreAcc
 	for _, r := range records {
 		if r.Score == 1000000 {
@@ -109,17 +120,19 @@ func DecoderGameRecord(in []byte) []ScoreAcc {
 			}
 		}
 	}
-	b19 := []ScoreAcc{maxRecord}
-	// 将records中的前19个记录加入b19
-	if len(records) >= 19 {
-		b19 = append(b19, records[:19]...)
-	} else {
-		b19 = append(b19, records...)
+	bn := []ScoreAcc{maxRecord}
+	if n<=0{
+		return  append(bn, records...)
 	}
-	return b19
-
+	// 将records中的前19个记录加入b19
+	if len(records) >= n {
+		bn = append(bn, records[:n]...)
+	} else {
+		bn = append(bn, records...)
+	}
+	return bn
 }
-
+// 通过zip文件读取所有云端内容
 func ParseSave(path string) (map[string]any, error) {
 	m, err := ReadZip(path)
 	if err != nil {
@@ -132,14 +145,29 @@ func ParseSave(path string) (map[string]any, error) {
 		}
 		m[k] = out
 	}
-	if m["gameRecord"][:1][0] != byte(0x01) {
+	if m["gameRecord"][0] != byte(0x01) {
 		return nil, errors.New("版本号不正确，可能协议已更新。")
 	}
 	//json
 	jsons := make(map[string]any)
-	jsons["gameRecord"] = DecoderGameRecord(m["gameRecord"][1:])
+	jsons["gameRecord"] = B19(DecoderGameRecord(m["gameRecord"][1:]))
 	jsons["settings"] = *DecoderWithStruct[Settings](m["settings"][1:])
 	jsons["user"] = *DecoderWithStruct[User](m["user"][1:])
-	// fmt.Println(jsons)
 	return jsons, nil
+}
+
+// 通过url获取战绩,其余内容丢弃
+func ParseStatsByUrl(url string) ([]ScoreAcc, error) {
+	d, err := GetGameRecordData(url)
+	if err != nil {
+		return nil, err
+	}
+	d, err = Decrypt(d)
+	if err != nil {
+		return nil, fmt.Errorf("Decrypt file gameRecord Error %s", err.Error())
+	}
+	if d[0] != byte(0x01) {
+		return nil, errors.New("版本号不正确，可能协议已更新。")
+	}
+	return DecoderGameRecord(d[1:]), nil
 }

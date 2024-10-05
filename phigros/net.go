@@ -1,6 +1,9 @@
 package phigros
 
 import (
+	"archive/zip"
+	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -54,4 +57,32 @@ func SaveGameData(url, path string) error {
 		return fmt.Errorf("error saving file: %s", err.Error())
 	}
 	return nil
+}
+
+func GetGameRecordData(url string) ([]byte, error) {
+	rsp, err := http.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("error while downloading: %s", err.Error())
+
+	}
+	defer rsp.Body.Close()
+	data, _ := io.ReadAll(rsp.Body)
+	reader, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
+	if err != nil {
+		return nil, err
+	}
+
+	// 遍历 zip 文件中的文件
+	for _, file := range reader.File {
+		if file.Name == "gameRecord" {
+			f, err := file.Open()
+			if err != nil {
+				return nil, err
+			}
+			defer f.Close()
+			// 读取文件内容
+			return io.ReadAll(f)
+		}
+	}
+	return nil, errors.New("no file named gameRecord in zip")
 }
