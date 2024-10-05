@@ -22,11 +22,7 @@ func main() {
 
 func phi(ctx *gin.Context) {
 	session := ctx.Param("session")
-	if session == "" {
-		ctx.JSON(200, phigros.RespCode{Code: 400,Message: "bad session",Data:  nil})
-		return
-	}
-	if session[len(session)-1] == '\n' {
+	if session[len(session)-1] == '\\' {
 		session = session[:len(session)-1]
 	}
 	sn, _ := ctx.GetQuery("n")
