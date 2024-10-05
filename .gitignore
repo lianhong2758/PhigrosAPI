@@ -8,7 +8,7 @@
 *.so
 *.dylib
 
-/data/gamesave/*
+/data/*
 
 /test
 # Test binary, built with `go test -c`

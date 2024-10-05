@@ -34,7 +34,7 @@ func GetDataFormTap(url, token string) (data []byte, err error) {
 		return nil, err
 	}
 	if res.StatusCode!=200{
-		return nil,errors.New("bad Session")
+		return nil,fmt.Errorf("bad StatusCode from tap: %v",res.StatusCode)
 	}
 	defer res.Body.Close()
 	return io.ReadAll(res.Body)

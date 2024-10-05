@@ -115,3 +115,9 @@ type UserRecord struct {
 	PlayerInfo PlayerInfo `json:"playerInfo"`
 	ScoreAcc   []ScoreAcc `json:"scoreAcc"`
 }
+
+type RespCode struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    any    `json:"data"`
+}
