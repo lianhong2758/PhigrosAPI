@@ -99,7 +99,7 @@ func DecoderGameRecord(in []byte) []ScoreAcc {
 		records = append(records, record...)
 	}
 	sort.Slice(records, func(i, j int) bool {
-		return records[i].Rks < records[j].Rks
+		return records[i].Rks > records[j].Rks
 	})
 	return records
 
