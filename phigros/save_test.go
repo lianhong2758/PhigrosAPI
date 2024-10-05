@@ -1,7 +1,7 @@
 package phigros_test
 
 import (
-	"PhigrosApi/phigros"
+	"github.com/lianhong2758/PhigrosApi/phigros"
 	"encoding/json"
 	"fmt"
 	"testing"
