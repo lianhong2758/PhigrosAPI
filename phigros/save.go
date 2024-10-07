@@ -94,8 +94,8 @@ func DecoderGameRecord(in []byte) []ScoreAcc {
 }
 
 // 前19成绩,取最高成绩放第一位
-func B19(records []ScoreAcc) []ScoreAcc {
-	return BN(records, 19)
+func B20(records []ScoreAcc) []ScoreAcc {
+	return BN(records, 20)
 }
 
 // 取前n成绩,取最高成绩放第一位
@@ -124,7 +124,7 @@ func ParseSave(path string) (map[string]any, error) {
 	}
 	//json
 	jsons := make(map[string]any)
-	jsons["gameRecord"] = B19(DecoderGameRecord(m["gameRecord"][1:]))
+	jsons["gameRecord"] = B20(DecoderGameRecord(m["gameRecord"][1:]))
 	jsons["settings"] = *DecoderWithStruct[Settings](m["settings"][1:])
 	jsons["user"] = *DecoderWithStruct[User](m["user"][1:])
 	return jsons, nil
