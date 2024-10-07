@@ -94,16 +94,31 @@ func DecoderGameRecord(in []byte) []ScoreAcc {
 }
 
 // 前19成绩,取最高成绩放第一位
-func B20(records []ScoreAcc) []ScoreAcc {
-	return BN(records, 20)
+func B19(records []ScoreAcc) []ScoreAcc {
+	return BN(records, 19)
 }
 
 // 取前n成绩,取最高成绩放第一位
 func BN(records []ScoreAcc, n int) []ScoreAcc {
-	if n <= 0 || len(records) < n{
-		return  records
+	var maxRecord ScoreAcc
+	for _, r := range records {
+		if r.Score == 1000000 {
+			if r.Difficulty > maxRecord.Difficulty {
+				maxRecord = r
+			}
+		}
 	}
- return records[:n]
+	bn := []ScoreAcc{maxRecord}
+	if n <= 0 {
+		return append(bn, records...)
+	}
+	// 将records中的前19个记录加入b19
+	if len(records) >= n {
+		bn = append(bn, records[:n]...)
+	} else {
+		bn = append(bn, records...)
+	}
+	return bn
 }
 
 // 通过zip文件读取所有云端内容
@@ -124,7 +139,7 @@ func ParseSave(path string) (map[string]any, error) {
 	}
 	//json
 	jsons := make(map[string]any)
-	jsons["gameRecord"] = B20(DecoderGameRecord(m["gameRecord"][1:]))
+	jsons["gameRecord"] = B19(DecoderGameRecord(m["gameRecord"][1:]))
 	jsons["settings"] = *DecoderWithStruct[Settings](m["settings"][1:])
 	jsons["user"] = *DecoderWithStruct[User](m["user"][1:])
 	return jsons, nil
