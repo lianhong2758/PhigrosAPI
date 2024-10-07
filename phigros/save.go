@@ -63,7 +63,8 @@ func DecoderWithStruct[T PhigrosStruct](in []byte) *T {
 	var ps T
 	v := reflect.ValueOf(&ps).Elem()
 	reader := NewBytesReader(in)
-	for i := 0;i< v.NumField();i++ {
+	lenf:=v.NumField()
+	for i := 0; i <  lenf; i++ {
 		switch v.Field(i).Kind() {
 		case reflect.Bool:
 			v.Field(i).SetBool(reader.ReadBool())
@@ -80,7 +81,8 @@ func DecoderWithStruct[T PhigrosStruct](in []byte) *T {
 func DecoderGameRecord(in []byte) []ScoreAcc {
 	records := []ScoreAcc{}
 	reader := NewBytesReader(in)
-	for  i:=byte(0);i< reader.ReadShort();i++ {
+	lenr := reader.ReadShort()
+	for i := byte(0); i < lenr; i++ {
 		t := reader.ReadString()
 		songId := t[:len(t)-2]
 		record := reader.ReadRecord(songId)
