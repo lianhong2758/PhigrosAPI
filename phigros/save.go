@@ -100,25 +100,10 @@ func B19(records []ScoreAcc) []ScoreAcc {
 
 // 取前n成绩,取最高成绩放第一位
 func BN(records []ScoreAcc, n int) []ScoreAcc {
-	var maxRecord ScoreAcc
-	for _, r := range records {
-		if r.Score == 1000000 {
-			if r.Difficulty > maxRecord.Difficulty {
-				maxRecord = r
-			}
-		}
+	if n <= 0 || len(records) < n{
+		return  records
 	}
-	bn := []ScoreAcc{maxRecord}
-	if n <= 0 {
-		return append(bn, records...)
-	}
-	// 将records中的前19个记录加入b19
-	if len(records) >= n {
-		bn = append(bn, records[:n]...)
-	} else {
-		bn = append(bn, records...)
-	}
-	return bn
+ return records[:n]
 }
 
 // 通过zip文件读取所有云端内容
