@@ -80,7 +80,8 @@ func (b *Bytes) ReadRecord(songId string) []ScoreAcc {
 	b.ptr += 1
 	diff := difficulty[songId]
 	records := []ScoreAcc{}
-	for level := range len(diff) {
+
+	for level := 0; level < len(diff); level++ {
 		if GetBool(exists, level) {
 			scoreAcc := b.ReadScoreAcc()
 			scoreAcc.Level = levels[level]
