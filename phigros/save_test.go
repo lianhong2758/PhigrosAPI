@@ -11,7 +11,7 @@ import (
 
 // 个人Session获取查看link: https://www.taptap.cn/moment/535045245566452043
 // 2.2
-var Session = "zp4fenkahnb7639x9t6v38jmn"
+var Session = "nkyjch88ydrg4js83bea9jyiw"
 
 func TestSave(t *testing.T) {
 	//data, _ := phigros.GetDataFormTap(phigros.UserMeUrl, Session) //获取id
@@ -30,7 +30,7 @@ func TestJson(t *testing.T) {
 	data, _ := phigros.GetDataFormTap(phigros.UserMeUrl, Session) //获取id
 	var um phigros.UserMe
 	_ = json.Unmarshal(data, &um)
-	j.PlayerInfo = phigros.PlayerInfo{
+	j.PlayerInfo = &phigros.PlayerInfo{
 		Name:      um.Nickname,
 		CreatedAt: um.CreatedAt,
 		UpdatedAt: um.UpdatedAt,
@@ -40,6 +40,8 @@ func TestJson(t *testing.T) {
 	var gs phigros.GameSave
 	_ = json.Unmarshal(data, &gs)
 	ScoreAcc, _ := phigros.ParseStatsByUrl(gs.Results[0].GameFile.URL)
-	j.ScoreAcc = phigros.BN(ScoreAcc, 10)
-	fmt.Println(j)
+	j.ScoreAcc = phigros.BN(ScoreAcc, 2)
+	j.Summary = phigros.ProcessSummary(gs.Results[0].Summary)
+	data, _ = json.Marshal(j)
+	fmt.Println(string(data))
 }

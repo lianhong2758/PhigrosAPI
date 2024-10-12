@@ -38,7 +38,7 @@ func phi(ctx *gin.Context) {
 	}
 	var um phigros.UserMe
 	_ = json.Unmarshal(data, &um)
-	j.PlayerInfo = phigros.PlayerInfo{
+	j.PlayerInfo = &phigros.PlayerInfo{
 		Name:      um.Nickname,
 		CreatedAt: um.CreatedAt,
 		UpdatedAt: um.UpdatedAt,
@@ -53,5 +53,6 @@ func phi(ctx *gin.Context) {
 	_ = json.Unmarshal(data, &gs)
 	ScoreAcc, _ := phigros.ParseStatsByUrl(gs.Results[0].GameFile.URL)
 	j.ScoreAcc = phigros.BN(ScoreAcc, bn)
+	j.Summary = phigros.ProcessSummary(gs.Results[0].Summary)
 	ctx.JSON(200, phigros.RespCode{Code: 200,Message: "",Data: j})
 }
