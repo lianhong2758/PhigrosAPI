@@ -188,12 +188,5 @@ func ProcessSummary(sum string) (s *Summary) {
 		return nil
 	}
 	s = DecoderWithStruct[Summary](b)
-	// for range 4 {
-	// 	s.ScoreAcc = append(s.ScoreAcc, SummaryScoreAcc{
-	// 		Cleared:   reader.ReadShort(),
-	// 		FullCombo: reader.ReadShort(),
-	// 		Phi:       reader.ReadShort(),
-	// 	})
-	// }
 	return
 }
