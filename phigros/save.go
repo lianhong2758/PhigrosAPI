@@ -183,7 +183,7 @@ func ProcessSummary(sum string) (s *Summary) {
 	if sum == "" {
 		return nil
 	}
-	b, err := base64.RawStdEncoding.DecodeString(sum)
+	b, err := base64.StdEncoding.DecodeString(sum)
 	if err != nil {
 		return nil
 	}
