@@ -64,7 +64,7 @@ func DecoderWithStruct[T PhigrosStruct](in []byte) *T {
 	var ps T
 	v := reflect.ValueOf(&ps).Elem()
 	reader := NewBytesReader(in)
-	for i := range v.NumField() {
+	for i, len := 0, v.NumField(); i < len; i++ {
 		set(v.Field(i), reader)
 	}
 	return &ps
@@ -82,9 +82,9 @@ func set(rv reflect.Value, reader *Bytes) {
 	case reflect.Uint8:
 		rv.SetUint(uint64(reader.ReadByte1()))
 	case reflect.Array:
-		for i := range rv.Len() {
+		for i, len := 0, rv.Len(); i < len; i++ {
 			if rv.Index(i).Kind() == reflect.Struct {
-				for ii := range rv.Index(i).NumField() {
+				for ii, iilen := 0, rv.Index(i).NumField(); ii < iilen; ii++ {
 					set(rv.Index(i).Field(ii), reader)
 				}
 			} else {
@@ -98,7 +98,7 @@ func set(rv reflect.Value, reader *Bytes) {
 func DecoderGameRecord(in []byte) []ScoreAcc {
 	records := []ScoreAcc{}
 	reader := NewBytesReader(in)
-	for range reader.ReadVarShort() {
+	for i, leni := byte(0), reader.ReadVarShort(); i < leni; i++ {
 		t := reader.ReadString()
 		songId := t[:len(t)-2]
 		record := reader.ReadRecord(songId)
@@ -183,7 +183,7 @@ func ProcessSummary(sum string) (s *Summary) {
 	if sum == "" {
 		return nil
 	}
-	b, err := base64.RawStdEncoding.DecodeString(sum)
+	b, err := base64.StdEncoding.DecodeString(sum)
 	if err != nil {
 		return nil
 	}
