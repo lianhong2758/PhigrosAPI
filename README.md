@@ -31,6 +31,9 @@ result
 ## 构建流程
 - 1. 编译程序
   - 本地搭建Go环境,在项目目录下执行`go build`即可
+- 2. 图片服务需要额外下载内容
+  - 下载这个文件夹的内容下载到data文件夹[RosmBot-Data-phi](https://github.com/lianhong2758/RosmBot-Data/tree/main/phi)
+  - 下载这个文件夹里面的MaokenZhuyuanTi.ttf,放到data文件夹[RosmBot-Data-font](https://github.com/lianhong2758/RosmBot-Data/tree/main/font)
 
 ## 在线体验
 -  `http://106.54.63.95:8080`
