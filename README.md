@@ -19,6 +19,13 @@ result
 }
 
 ```
+2.绘图,获取数据同时进行
+GET localhost:8080/phigros/:session?n=num&pic=bool&type=type
+示例 n为返回数据的图片bn,pic指定输出为图片,true/false,type指定返回图片或者路径,pic/json
+GET localhost:8080/phigros/dwadsfawdsad?n=21&pic=true&type=pic
+
+result
+图片数据
 
 ## 构建流程
 - 1. 编译程序

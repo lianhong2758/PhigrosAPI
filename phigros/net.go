@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 var (
@@ -33,8 +34,8 @@ func GetDataFormTap(url, token string) (data []byte, err error) {
 	if err != nil {
 		return nil, err
 	}
-	if res.StatusCode!=200{
-		return nil,fmt.Errorf("bad StatusCode from tap: %v",res.StatusCode)
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("bad StatusCode from tap: %v", res.StatusCode)
 	}
 	defer res.Body.Close()
 	return io.ReadAll(res.Body)
@@ -88,4 +89,30 @@ func GetGameRecordData(url string) ([]byte, error) {
 		}
 	}
 	return nil, errors.New("no file named gameRecord in zip")
+}
+
+// 快速获取
+func GetData(url string) (body []byte, err error) {
+	var client = &http.Client{}
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Accept", "*/*")
+
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
+		return nil, errors.New("GetCode: " + strconv.Itoa(res.StatusCode))
+	}
+	body, err = io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	return
 }
