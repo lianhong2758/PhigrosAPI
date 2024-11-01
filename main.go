@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"os"
 	"strconv"
 	"strings"
@@ -29,9 +28,12 @@ func phi(ctx *gin.Context) {
 		session = session[:len(session)-1]
 	}
 	sn, _ := ctx.GetQuery("n")
-	bn := 0
+	bn := 21
 	if sn != "" {
 		bn, _ = strconv.Atoi(sn)
+	}
+	if bn > 200 {
+		bn = 200
 	}
 	pic, havepic := ctx.GetQuery("pic")
 	//不需要pic
@@ -42,36 +44,18 @@ func phi(ctx *gin.Context) {
 	if !havePath || pic != "json" {
 		havePath = false
 	}
-	j := phigros.UserRecord{Session: session}
-	data, err := phigros.GetDataFormTap(phigros.UserMeUrl, session) //获取id
+	j, err := phigros.GetUserRecordQuickly(session)
 	if err != nil {
 		ctx.JSON(200, phigros.RespCode{Code: 200, Message: err.Error(), Data: nil})
 		return
 	}
-	var um phigros.UserMe
-	_ = json.Unmarshal(data, &um)
-	j.PlayerInfo = &phigros.PlayerInfo{
-		Name:      um.Nickname,
-		CreatedAt: um.CreatedAt,
-		UpdatedAt: um.UpdatedAt,
-		Avatar:    um.Avatar,
-	}
-	data, err = phigros.GetDataFormTap(phigros.SaveUrl, session) //获取存档链接
-	if err != nil {
-		ctx.JSON(200, phigros.RespCode{Code: 200, Message: err.Error(), Data: nil})
-		return
-	}
-	var gs phigros.GameSave
-	_ = json.Unmarshal(data, &gs)
-	ScoreAcc, _ := phigros.ParseStatsByUrl(gs.Results[0].GameFile.URL)
-	j.ScoreAcc = phigros.BN(ScoreAcc, bn)
-	j.Summary = phigros.ProcessSummary(gs.Results[0].Summary)
+	j.ScoreAcc = phigros.BN(j.ScoreAcc, bn)
 	if !havepic {
 		ctx.JSON(200, phigros.RespCode{Code: 200, Message: "", Data: j})
 		return
 	}
 	draw.DownloadAvatar(j.PlayerInfo.Avatar, session)
-	err = draw.DrawPic(0.5, j, strconv.FormatFloat(float64(j.Summary.Rks), 'f', 6, 64), draw.Challengemoderank[(j.Summary.ChallengeModeRank-(j.Summary.ChallengeModeRank%100))/100], strconv.Itoa(int(j.Summary.ChallengeModeRank%100)), session)
+	err = draw.DrawPic(0.5, j, strconv.FormatFloat(float64(j.Summary.Rks), 'f', 6, 64), draw.Challengemoderank[j.Summary.ChalID], j.Summary.Chalnum, session)
 	if err != nil {
 		ctx.JSON(200, phigros.RespCode{Code: 200, Message: err.Error(), Data: nil})
 		return

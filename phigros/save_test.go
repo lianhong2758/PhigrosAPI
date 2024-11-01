@@ -26,22 +26,8 @@ func TestSave(t *testing.T) {
 }
 func TestJson(t *testing.T) {
 	_ = phigros.LoadDifficult("../difficulty.tsv")
-	j := phigros.UserRecord{Session: Session}
-	data, _ := phigros.GetDataFormTap(phigros.UserMeUrl, Session) //获取id
-	var um phigros.UserMe
-	_ = json.Unmarshal(data, &um)
-	j.PlayerInfo = &phigros.PlayerInfo{
-		Name:      um.Nickname,
-		CreatedAt: um.CreatedAt,
-		UpdatedAt: um.UpdatedAt,
-		Avatar:    um.Avatar,
-	}
-	data, _ = phigros.GetDataFormTap(phigros.SaveUrl, Session) //获取存档链接
-	var gs phigros.GameSave
-	_ = json.Unmarshal(data, &gs)
-	ScoreAcc, _ := phigros.ParseStatsByUrl(gs.Results[0].GameFile.URL)
-	j.ScoreAcc = phigros.BN(ScoreAcc, 2)
-	j.Summary = phigros.ProcessSummary(gs.Results[0].Summary)
-	data, _ = json.Marshal(j)
+	j,_:= phigros.GetUserRecordQuickly(Session)
+	j.ScoreAcc = phigros.BN(j.ScoreAcc, 5)
+	data, _ := json.Marshal(j)
 	fmt.Println(string(data))
 }

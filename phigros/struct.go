@@ -3,7 +3,7 @@ package phigros
 import "time"
 
 type PhigrosStruct interface {
-	Settings | User|Summary
+	Settings | User | Summary
 }
 type Settings struct {
 	ChordSupport      bool    `json:"chordSupport"`
@@ -33,7 +33,7 @@ type ScoreAcc struct {
 	Fc         bool    `json:"fc"`
 	SongId     string  `json:"songId"`
 	Difficulty float32 `json:"difficulty"`
-	Rks        float32 `json:"rks"`
+	Rks        float32 `json:"rks" phi:"-"`
 }
 
 // net struct
@@ -123,15 +123,17 @@ type RespCode struct {
 	Data    any    `json:"data"`
 }
 type Summary struct {
-	SaveVersion       byte
-	ChallengeModeRank int16
-	Rks               float32
-	GameVersion       byte
-	Avatar            string
-	ScoreAcc          [4]SummaryScoreAcc
+	SaveVersion       byte `json:"saveVersion"`
+	ChallengeModeRank int16 `json:"challengeModeRank"`
+	Rks               float32`json:"rks"`
+	GameVersion       byte`json:"gameVersion"`
+	Avatar            string`json:"avatar"`
+	ScoreAcc          [4]SummaryScoreAcc`json:"scoreAcc"`
+	ChalID            int16    `json:"chalID" phi:"-"`
+	Chalnum           string `json:"chalnum" phi:"-"`
 }
 type SummaryScoreAcc struct {
-	Cleared   int16
-	FullCombo int16
-	Phi       int16
+	Cleared   int16`json:"cleared"`
+	FullCombo int16`json:"fullCombo"`
+	Phi       int16`json:"phi"`
 }
