@@ -54,7 +54,7 @@ func DrawPic(accuracy float64, j *phigros.UserRecord, allrks, chal, chalnum, Ses
 	canvas.Fill()
 	//底边
 	_ = canvas.ParseFontFace(fontsd, 60*accuracy)
-	canvas.DrawStringAnchored("Phigros B19 & Create By 清雪 & Designer By eastown",
+	canvas.DrawStringAnchored("Phigros B19 & Create By PhigrosAPI & Designer By eastown",
 		float64(w/2), (float64(h) - 120*accuracy), 0.5, 0.5)
 	//头图文字
 	_ = canvas.ParseFontFace(fontsd, 90*accuracy)
