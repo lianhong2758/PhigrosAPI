@@ -15,7 +15,7 @@ import (
 	"github.com/nfnt/resize"
 )
 
-func DrawPic(accuracy float64, j phigros.UserRecord, allrks, chal, chalnum, Session string) (err error) {
+func DrawPic(accuracy float64, j *phigros.UserRecord, allrks, chal, chalnum, Session string) (err error) {
 	var (
 		w, h = int(2360 * accuracy), int(float64(960+len(j.ScoreAcc)*160) * accuracy)
 		//斜角阿尔法
