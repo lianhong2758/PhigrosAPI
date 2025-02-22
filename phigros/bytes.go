@@ -16,6 +16,7 @@ func (b *Bytes) Alignment() {
 		b.ptr++
 	}
 }
+
 // 也叫VarInt,这里用来对应uint16,因为内置的uint8==byte无法共存
 func (b *Bytes) ReadVarShort() byte {
 	b.Alignment()
@@ -62,10 +63,6 @@ func (b *Bytes) ReadString() string {
 	return BytesToString(b.Data[b.ptr-int(length) : b.ptr])
 }
 
-func (b *Bytes) ReadScoreAcc() ScoreAcc {
-	return ScoreAcc{Score: int(b.ReadInt32()), Acc: b.ReadFloat32()}
-}
-
 func (b *Bytes) ReadInt32() int32 {
 	b.Alignment()
 	b.ptr += 4
@@ -93,7 +90,9 @@ func (b *Bytes) ReadRecord(songId string) []ScoreAcc {
 	records := []ScoreAcc{}
 	for level := range len(diff) {
 		if GetBool(exists, level) {
-			scoreAcc := b.ReadScoreAcc()
+			scoreAcc := ScoreAcc{}
+			scoreAcc.Score = int(b.ReadInt32())
+			scoreAcc.Acc = b.ReadFloat32()
 			scoreAcc.Level = levels[level]
 			scoreAcc.Fc = GetBool(fc, level)
 			scoreAcc.SongId = songId
