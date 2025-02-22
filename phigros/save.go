@@ -2,12 +2,12 @@ package phigros
 
 import (
 	"archive/zip"
-	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"log"
 	"reflect"
 	"sort"
 	"strconv"
@@ -104,14 +104,49 @@ func set(rv reflect.Value, reader *Bytes) {
 			}
 		}
 	default:
+		log.Println("未定义的类型:? %s", rv.Kind())
 	}
 }
 
-// 未来实现
-func Marshal[T PhigrosStruct](v *T) []byte {
-	var buff bytes.Buffer
-	buff.WriteByte('1')
-	return buff.Bytes()
+// 未来实现,暂时不要使用
+func Marshal[T PhigrosStruct](in *T) []byte {
+	buff := new(Buff)
+	v := reflect.ValueOf(&in).Elem()
+	t := reflect.TypeOf(&in).Elem()
+	for i := range v.NumField() {
+		if t.Field(i).Tag.Get("phi") != "-" {
+			save(v.Field(i), buff)
+		}
+	}
+	return buff.Bytes.Bytes()
+}
+
+func save(rv reflect.Value, buff *Buff) {
+	if rv.Kind() == reflect.Bool {
+		buff.SaveBool(rv.Bool())
+		return
+	}
+	buff.Alignment()
+	switch rv.Kind() {
+	case reflect.String:
+		buff.SaveString(rv.String())
+	case reflect.Float32:
+	case reflect.Int16:
+	case reflect.Uint8:
+	case reflect.Uint16:
+	case reflect.Array:
+		// for i := range rv.Len() {
+		// 	if rv.Index(i).Kind() == reflect.Struct {
+		// 		for ii := range rv.Index(i).NumField() {
+		// 			set(rv.Index(i).Field(ii), reader)
+		// 		}
+		// 	} else {
+		// 		//非结构体数组
+		// 		set(rv.Index(i), reader)
+		// 	}
+		// }
+	default:
+	}
 }
 
 func UnmarshalGameRecord(in []byte) []ScoreAcc {
@@ -179,7 +214,7 @@ func ParseSave(path string) (map[string]any, error) {
 	jsons["gameRecord"] = B19(UnmarshalGameRecord(m["gameRecord"][1:]))
 	jsons["settings"] = *Unmarshal[Settings](m["settings"][1:])
 	jsons["user"] = *Unmarshal[User](m["user"][1:])
-	jsons["gameProgress"] =*Unmarshal[GameProgress](m["gameProgress"][1:])
+	jsons["gameProgress"] = *Unmarshal[GameProgress](m["gameProgress"][1:])
 	return jsons, nil
 }
 
