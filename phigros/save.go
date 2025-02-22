@@ -104,7 +104,7 @@ func set(rv reflect.Value, reader *Bytes) {
 			}
 		}
 	default:
-		log.Println("未定义的类型:? %s", rv.Kind())
+		log.Printf("未定义的类型:? %s", rv.Kind())
 	}
 }
 
