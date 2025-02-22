@@ -33,6 +33,8 @@ result
   - 本地搭建Go环境,在项目目录下执行`go build`即可
 - 2. 图片服务需要额外下载内容
   - 下载这个文件夹的内容下载到data文件夹[RosmBot-Data-phi](https://github.com/lianhong2758/RosmBot-Data/tree/main/phi)
+    - 若此文件版本更新不及时,可以前往这里[Phigros_Resource-illustration](https://github.com/7aGiven/Phigros_Resource/tree/illustration)下载最新曲绘
+    - 最新定数表[difficulty.tsv](https://github.com/7aGiven/Phigros_Resource/blob/info/difficulty.tsv)
   - 下载这个文件夹里面的MaokenZhuyuanTi.ttf,放到data文件夹[RosmBot-Data-font](https://github.com/lianhong2758/RosmBot-Data/tree/main/font)
 
 ## 在线体验
