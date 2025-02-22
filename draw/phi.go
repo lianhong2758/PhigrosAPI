@@ -11,7 +11,7 @@ var fontsd []byte
 
 func init() {
 	Challengemode = DataPath + "challengemode/"
-	// 字体
+	// 默认字体,如需修改直接调用LoadFont
 	Font = DataPath + "MaokenZhuyuanTi.ttf"
 	// 评级
 	Rank = DataPath + "rank/"
@@ -22,7 +22,7 @@ func init() {
 	//头图
 	Avatar = DataPath + "avatar/"
 	//字体
-	fontsd, _ = os.ReadFile(Font)
+	LoadFont(Font)
 	if IsNotExist(DataPath + "output") {
 		_ = os.MkdirAll(DataPath+"output", 0755)
 	}
@@ -48,4 +48,8 @@ func DownloadAvatar(url, session string) error {
 	_, err = f.Write(data)
 	f.Close()
 	return err
+}
+
+func LoadFont(path string) {
+	fontsd, _ = os.ReadFile(Font)
 }
