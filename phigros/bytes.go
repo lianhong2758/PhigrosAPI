@@ -16,7 +16,7 @@ func (b *Bytes) Alignment() {
 		b.ptr++
 	}
 }
-
+// 也叫VarInt,这里用来对应uint16,因为内置的uint8==byte无法共存
 func (b *Bytes) ReadVarShort() byte {
 	b.Alignment()
 	num := b.Data[b.ptr]

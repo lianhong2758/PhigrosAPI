@@ -90,6 +90,8 @@ func set(rv reflect.Value, reader *Bytes) {
 		rv.SetInt(int64(reader.ReadShort()))
 	case reflect.Uint8:
 		rv.SetUint(uint64(reader.ReadByte1()))
+	case reflect.Uint16:
+		rv.SetUint(uint64(reader.ReadVarShort()))
 	case reflect.Array:
 		for i := range rv.Len() {
 			if rv.Index(i).Kind() == reflect.Struct {
@@ -177,6 +179,7 @@ func ParseSave(path string) (map[string]any, error) {
 	jsons["gameRecord"] = B19(UnmarshalGameRecord(m["gameRecord"][1:]))
 	jsons["settings"] = *Unmarshal[Settings](m["settings"][1:])
 	jsons["user"] = *Unmarshal[User](m["user"][1:])
+	jsons["gameProgress"] =*Unmarshal[GameProgress](m["gameProgress"][1:])
 	return jsons, nil
 }
 
