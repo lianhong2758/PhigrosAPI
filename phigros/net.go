@@ -22,8 +22,8 @@ func GetDataFormTap(url, token string) (data []byte, err error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("X-LC-Id", "rAK3FfdieFob2Nn8Am")
-	req.Header.Add("X-LC-Key", "Qr9AEqtuoSVS3zeD6iVbM4ZC0AtkJcQ89tywVyi0")
+	req.Header.Add("X-LC-Id", ClientId)
+	req.Header.Add("X-LC-Key",AppKey)
 	req.Header.Add("X-LC-Session", token)
 	req.Header.Add("User-Agent", "LeanCloud-CSharp-SDK/1.0.3")
 	req.Header.Add("Accept", "*/*")

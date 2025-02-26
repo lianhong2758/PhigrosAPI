@@ -36,6 +36,7 @@ result
     - 若此文件版本更新不及时,可以前往这里[Phigros_Resource-illustration](https://github.com/7aGiven/Phigros_Resource/tree/illustration)下载最新曲绘
     - 最新定数表[difficulty.tsv](https://github.com/7aGiven/Phigros_Resource/blob/info/difficulty.tsv)
   - 下载这个文件夹里面的MaokenZhuyuanTi.ttf,放到data文件夹[RosmBot-Data-font](https://github.com/lianhong2758/RosmBot-Data/tree/main/font)
+- 3. qr扫码登录部分可自由设计, `r.Data.QrcodeURL`也可直接浏览器打开登录
 
 ## 在线体验
 -  `http://106.54.63.95:8080/phigros/nkyjch88ydrg4js83bea9jyiw?n=5`
