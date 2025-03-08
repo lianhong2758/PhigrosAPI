@@ -39,7 +39,7 @@ result
 - 3. qr扫码登录部分可自由设计, `r.Data.QrcodeURL`也可直接浏览器打开登录
 
 ## 在线体验
--  `http://106.54.63.95:8080/phigros/nkyjch88ydrg4js83bea9jyiw?n=5`
+-  `http://117.72.123.235:8080/phigros/nkyjch88ydrg4js83bea9jyiw?n=5`
 
 ## 鸣谢
 - [PhigrosLibrary](https://github.com/7aGiven/PhigrosLibrary?tab=readme-ov-file)
