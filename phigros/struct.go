@@ -161,7 +161,7 @@ type Summary struct {
 	SaveVersion       byte               `json:"saveVersion"`
 	ChallengeModeRank int16              `json:"challengeModeRank"`
 	Rks               float32            `json:"rks"`
-	GameVersion       byte               `json:"gameVersion"`
+	GameVersion       uint16               `json:"gameVersion"`
 	Avatar            string             `json:"avatar"`
 	ScoreAcc          [4]SummaryScoreAcc `json:"scoreAcc"`
 	ChalID            int16              `json:"chalID" phi:"-"`
