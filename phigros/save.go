@@ -250,7 +250,7 @@ func ParseSave(path string) (map[string]any, error) {
 	}
 	//json
 	jsons := make(map[string]any)
-	jsons["gameRecord"] = Unmarshal[GameRecord](m["gameRecord"][1:]).Score() //B19(UnmarshalGameRecord(m["gameRecord"][1:]))
+	jsons["gameRecord"] = *Unmarshal[GameRecord](m["gameRecord"][1:]) //B19(UnmarshalGameRecord(m["gameRecord"][1:]))
 	jsons["settings"] = *Unmarshal[Settings](m["settings"][1:])
 	jsons["user"] = *Unmarshal[User](m["user"][1:])
 	jsons["gameProgress"] = *Unmarshal[GameProgress](m["gameProgress"][1:])
