@@ -3,7 +3,7 @@ package phigros
 import "time"
 
 type PhigrosStruct interface {
-	Settings | User | Summary | GameProgress
+	Settings | User | Summary | GameProgress | GameRecord
 }
 
 /*
@@ -60,7 +60,7 @@ type GameProgress struct {
 	Chapter8Passed             bool      `json:"chapter8Passed"`
 	Chapter8SongUnlocked       uint8     `json:"chapter8SongUnlocked"`
 }
-
+type GameRecord map[string][]ScoreAcc
 type ScoreAcc struct {
 	Score      int     `json:"score"`
 	Acc        float32 `json:"acc"`
@@ -149,7 +149,8 @@ type UserRecord struct {
 	Session    string      `json:"session"`
 	PlayerInfo *PlayerInfo `json:"playerInfo"`
 	ScoreAcc   []ScoreAcc  `json:"scoreAcc"`
-	Summary    *Summary    `json:"summary"`
+	GameRecord *GameRecord`json:"-"`
+	Summary    *Summary `json:"summary"`
 }
 
 type RespCode struct {
@@ -161,7 +162,7 @@ type Summary struct {
 	SaveVersion       byte               `json:"saveVersion"`
 	ChallengeModeRank int16              `json:"challengeModeRank"`
 	Rks               float32            `json:"rks"`
-	GameVersion       uint16               `json:"gameVersion"`
+	GameVersion       uint16             `json:"gameVersion"`
 	Avatar            string             `json:"avatar"`
 	ScoreAcc          [4]SummaryScoreAcc `json:"scoreAcc"`
 	ChalID            int16              `json:"chalID" phi:"-"`

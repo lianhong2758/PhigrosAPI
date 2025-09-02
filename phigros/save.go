@@ -15,6 +15,11 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+// 单独实现解析
+type Unmarshaler interface {
+	UnmarshalByte([]byte)
+}
+
 func ReadZip(path string) (m map[string][]byte, err error) {
 	m = map[string][]byte{}
 	// 打开 zip 文件
@@ -66,8 +71,21 @@ func unpad(data []byte) []byte {
 
 func Unmarshal[T PhigrosStruct](in []byte) *T {
 	var ps T
-	v := reflect.ValueOf(&ps).Elem()
+	v := reflect.ValueOf(&ps)
 	t := reflect.TypeOf(&ps).Elem()
+
+	// 检查指针是否实现了Unmarshaler接口
+	if v.Elem().Kind() == reflect.Map {
+		newMap := reflect.MakeMap(v.Elem().Type())
+		v.Elem().Set(newMap)
+	}
+	if v.Type().NumMethod() > 0 && v.CanInterface() {
+		if u, ok := v.Interface().(Unmarshaler); ok {
+			u.UnmarshalByte(in)
+			return &ps
+		}
+	}
+	v = v.Elem()
 	reader := NewBytesReader(in)
 	for i := range v.NumField() {
 		if t.Field(i).Tag.Get("phi") != "-" {
@@ -148,7 +166,18 @@ func save(rv reflect.Value, buff *Buff) {
 	default:
 	}
 }
-
+func (gameRecord GameRecord) UnmarshalByte(in []byte) {
+	reader := NewBytesReader(in)
+	for range reader.ReadVarShort() {
+		t := reader.ReadString()
+		songId := t[:len(t)-2]
+		record := reader.ReadRecord(songId)
+		if _, ok := gameRecord[songId]; ok {
+			gameRecord[songId] = record
+		}
+		gameRecord[songId] = record
+	}
+}
 func UnmarshalGameRecord(in []byte) []ScoreAcc {
 	records := []ScoreAcc{}
 	reader := NewBytesReader(in)
@@ -163,6 +192,16 @@ func UnmarshalGameRecord(in []byte) []ScoreAcc {
 	})
 	return records
 
+}
+func (g GameRecord) Score() []ScoreAcc {
+	records := []ScoreAcc{}
+	for _, v := range g {
+		records = append(records, v...)
+	}
+	sort.Slice(records, func(i, j int) bool {
+		return records[i].Rks > records[j].Rks
+	})
+	return records
 }
 
 // 前19成绩,取最高成绩放第一位
@@ -211,7 +250,7 @@ func ParseSave(path string) (map[string]any, error) {
 	}
 	//json
 	jsons := make(map[string]any)
-	jsons["gameRecord"] = B19(UnmarshalGameRecord(m["gameRecord"][1:]))
+	jsons["gameRecord"] = Unmarshal[GameRecord](m["gameRecord"][1:]).Score() //B19(UnmarshalGameRecord(m["gameRecord"][1:]))
 	jsons["settings"] = *Unmarshal[Settings](m["settings"][1:])
 	jsons["user"] = *Unmarshal[User](m["user"][1:])
 	jsons["gameProgress"] = *Unmarshal[GameProgress](m["gameProgress"][1:])
@@ -219,7 +258,7 @@ func ParseSave(path string) (map[string]any, error) {
 }
 
 // 通过url获取战绩,其余内容丢弃
-func ParseStatsByUrl(url string) ([]ScoreAcc, error) {
+func ParseStatsByUrl(url string) (*GameRecord, error) {
 	d, err := GetGameRecordData(url)
 	if err != nil {
 		return nil, err
@@ -231,7 +270,8 @@ func ParseStatsByUrl(url string) ([]ScoreAcc, error) {
 	if d[0] != byte(0x01) {
 		return nil, errors.New("版本号不正确，可能协议已更新。")
 	}
-	return UnmarshalGameRecord(d[1:]), nil
+	//return UnmarshalGameRecord(d[1:]), nil
+	return Unmarshal[GameRecord](d[1:]), nil
 }
 
 func ProcessSummary(sum string) (s *Summary) {
@@ -265,7 +305,8 @@ func GetUserRecordQuickly(session string) (*UserRecord, error) {
 		return nil, err
 	}
 	gs := gjson.Parse(BytesToString(data))
-	j.ScoreAcc, _ = ParseStatsByUrl(gs.Get("results.0.gameFile.url").String()) //gs.Results[0].GameFile.URL
-	j.Summary = ProcessSummary(gs.Get("results.0.summary").String())           //gs.Results[0].Summary
+	j.GameRecord, _ = ParseStatsByUrl(gs.Get("results.0.gameFile.url").String()) //gs.Results[0].GameFile.URL
+	j.ScoreAcc = j.GameRecord.Score()
+	j.Summary = ProcessSummary(gs.Get("results.0.summary").String()) //gs.Results[0].Summary
 	return &j, nil
 }
